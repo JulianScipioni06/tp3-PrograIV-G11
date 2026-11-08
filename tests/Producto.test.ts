@@ -26,3 +26,23 @@ describe("GET /productos/:id", () => {
     expect(typeof res.body.precio).toBe("number");
     });
 });
+
+describe("GET /productos/:id inexistente", () => {
+    it("devuelve 404 y un JSON con la propiedad error", async () => {
+        const res = await request(app).get("/productos/9999");
+
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty("error");
+        expect(typeof res.body.error).toBe("string");
+    });
+});
+
+describe("GET /productos/:id con id inválido", () => {
+    it("devuelve 404 y un JSON con la propiedad error", async () => {
+        const res = await request(app).get("/productos/abc");
+
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty("error");
+        expect(typeof res.body.error).toBe("string");
+    });
+});
