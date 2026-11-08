@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cors from 'cors';
 import { createDb, seedDb } from './db/connection';
 
 import { ProductoRepository } from './repositories/ProductoRepository';
@@ -7,10 +8,13 @@ import { PedidoRepository } from './repositories/PedidoRepository';
 import { makeProductosRouter } from './routes/productos.routes';
 import { makePedidosRouter } from './routes/pedidos.routes';
 import { makeReportesRouter } from './routes/reportes.routes';
-import { makeTestRouter } from './routes/e2e.routes'; 
+import { makeTestRouter } from './routes/e2e.routes';
+
+import { notFoundMiddleware, globalErrorHandler } from './middlewares/errorHandler';
 
 export function makeApp(dbPath?: string): Express {
     const app = express();
+    app.use(cors());
     app.use(express.json());
 
     // Si estamos testeando usamos la RAM, si no, creamos un archivo físico
@@ -33,6 +37,10 @@ export function makeApp(dbPath?: string): Express {
     app.use('/reportes', makeReportesRouter(pedidoRepo, productoRepo));
 
     app.use('/__test__', makeTestRouter(db));
+
+    // 5. Middleware de error
+    app.use(notFoundMiddleware);
+    app.use(globalErrorHandler);
 
     return app;
 }
