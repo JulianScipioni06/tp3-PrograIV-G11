@@ -1,6 +1,12 @@
 import { useState } from 'react';
+import type { ProductoAPI } from './CafeMenu';
 
-export const CafeSelector = ({ productos }: { productos: any[] }) => {
+interface CafeSelectorProps {
+    productos: ProductoAPI[];
+    onAgregar?: (producto: ProductoAPI) => void;
+}
+
+export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
     const [bebida, setBebida] = useState<string | null>(null);
     const [tamanioSeleccionado, setTamanio] = useState<string | null>(null);
     const [origen, setOrigen] = useState<string | null>(null);
@@ -16,6 +22,12 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
     const bebidasUnicas = Array.from(new Set(productos.map(p => p.nombre)));
     const tamaniosUnicos = Array.from(new Set(productos.map(p => p.tamanio))).filter(Boolean); // filter por si alguno viene vacío
     const origenesUnicos = ['Colombia', 'Brasil', 'Etiopía']; 
+
+    const handleAgregar = () => {
+    if (productoSeleccionado && onAgregar) {
+        onAgregar(productoSeleccionado);
+    }
+    };
 
     return (
         <div className="container mt-4">
@@ -79,6 +91,7 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
         <button 
             className="btn btn-success btn-lg w-100 mt-2" 
             disabled={!estaCompleto}
+            onClick={handleAgregar}
         >
             Agregar al carrito
         </button>
