@@ -3,8 +3,8 @@ import { CafeMenu, type ProductoAPI } from './components/CafeMenu';
 import { crearPedido } from './api/cliente';
 import type { Pedido } from './api/schemas';
 import { Header } from './components/Header';
-import { obtenerMesaDesdeUrl } from './utils/mesa'; // 👈 Importamos la tuya, que ya está testeada
-import './styles/custom.scss'
+import { obtenerMesaDesdeUrl } from './utils/mesa';
+import './styles/custom.scss';
 
 interface ItemCarrito {
   producto: ProductoAPI;
@@ -40,8 +40,7 @@ function App() {
     setErrorCheckout(null);
 
     try {
-      // 👈 Usamos tu función pura para saber de qué mesa es el pedido
-      const mesaId = obtenerMesaDesdeUrl(window.location.search) ?? undefined; 
+      const mesaId = obtenerMesaDesdeUrl(window.location.search) ?? undefined;
       
       const items = carrito.map((item) => ({
         productoId: item.producto.id,
@@ -60,9 +59,8 @@ function App() {
   };
 
   return (
-    <div className="app-container"> {/* 👈 Tu layout de 375px */}
-      
-      <Header /> {/* 👈 Reemplazamos el h1 estático por tu componente, adiós error! */}
+    <div className="app-container">
+      <Header />
 
       <main className="p-3">
         <CafeMenu onAgregar={agregarAlCarrito} />
@@ -79,7 +77,6 @@ function App() {
                   <span>
                     {item.producto.nombre} x {item.cantidad}
                   </span>
-                  {/* Le agregué el * de multiplicar que faltaba en tu código original */}
                   <span>${item.producto.precioBase * item.cantidad}</span>
                 </li>
               ))}
