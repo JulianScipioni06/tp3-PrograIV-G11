@@ -10,14 +10,22 @@ export class ProductoController {
     }
 
     listar = (req: Request, res: Response) => {
-        const productos = this.productoRepo.obtenerTodos();
-        res.status(200).json(productos.map((p) => this.conPrecio(p)));
+        try {
+            const productos = this.productoRepo.obtenerTodos();
+            res.status(200).json(productos.map((p) => this.conPrecio(p)));
+        } catch (error) {
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
     };
 
     obtenerPorId = (req: Request, res: Response) => {
-        const id = Number(req.params.id);
-        const producto = this.productoRepo.obtenerPorId(id);
-        if (!producto) return res.status(404).json({ error: 'Producto no encontrado' });
-        res.status(200).json(this.conPrecio(producto));
+        try {
+            const id = Number(req.params.id);
+            const producto = this.productoRepo.obtenerPorId(id);
+            if (!producto) return res.status(404).json({ error: 'Producto no encontrado' });
+            res.status(200).json(this.conPrecio(producto));
+        } catch (error) {
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
     };
 }
