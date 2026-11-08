@@ -12,6 +12,7 @@ vi.mock('../api/cliente', () => ({
 
 describe('CafeMenu - Consumo de API', () => {
     it('debe mostrar el estado de carga inicialmente', () => {
+        vi.mocked(apiClient).mockResolvedValueOnce({ ok: true, json: async () => [] } as any);
         render(<CafeMenu />);
         const loadingText = screen.getByText(/cargando el menú/i);
         expect(loadingText).toBeInTheDocument();
@@ -20,7 +21,7 @@ describe('CafeMenu - Consumo de API', () => {
     it('debe mostrar el selector cuando la API responde con éxito', async () => {
         vi.mocked(apiClient).mockResolvedValueOnce({
         ok: true,
-        json: async () => [{ id: 1, tipo: 'expreso', nombre: 'Espresso', tamaño: 'chico', precio: 1500 }]
+        json: async () => [{ id: 1, tipo: 'expreso', nombre: 'Espresso', tamanio: 'chico', precioBase: 1500 }]
         } as any);
 
         render(<CafeMenu />);
