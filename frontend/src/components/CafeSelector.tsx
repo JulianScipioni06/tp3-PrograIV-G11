@@ -11,26 +11,74 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
         (p) => p.nombre === bebida && p.tamaño === tamaño
     );
 
+    // REFACTOR: Extraemos las opciones únicas para no repetir botones en la pantalla
+    const bebidasUnicas = Array.from(new Set(productos.map(p => p.nombre)));
+    const tamañosUnicos = Array.from(new Set(productos.map(p => p.tamaño)));
+    const origenesUnicos = ['Colombia', 'Brasil', 'Etiopía']; // Orígenes fijos por ahora
+
     return (
-        <div>
-        <h2>Armá tu café</h2>
+        <div className="container mt-4">
+        <h2 className="mb-4">Armá tu café</h2>
         
-        <div>
-            {productos.map((p) => (
-            <div key={p.id}>
-                <button onClick={() => setBebida(p.nombre)}>{p.nombre}</button>
-                <button onClick={() => setTamaño(p.tamaño)}>{p.tamaño}</button>
-                {/* Agregamos un botón de origen genérico para el test */}
-                <button onClick={() => setOrigen('Colombia')}>Colombia</button>
-            </div>
+        {/* PASO 1: Bebida */}
+        <div className="mb-4">
+            <h4>1. Elegí tu bebida</h4>
+            <div className="d-flex gap-2">
+            {bebidasUnicas.map(b => (
+                <button 
+                key={b} 
+                className={`btn ${bebida === b ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setBebida(b)}
+                >
+                {b}
+                </button>
             ))}
+            </div>
         </div>
 
+        {/* PASO 2: Tamaño */}
+        <div className="mb-4">
+            <h4>2. Elegí el tamaño</h4>
+            <div className="d-flex gap-2">
+            {tamañosUnicos.map(t => (
+                <button 
+                key={t} 
+                className={`btn ${tamaño === t ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setTamaño(t)}
+                >
+                {t}
+                </button>
+            ))}
+            </div>
+        </div>
+
+        {/* PASO 3: Origen */}
+        <div className="mb-4">
+            <h4>3. Elegí el origen</h4>
+            <div className="d-flex gap-2">
+            {origenesUnicos.map(o => (
+                <button 
+                key={o} 
+                className={`btn ${origen === o ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setOrigen(o)}
+                >
+                {o}
+                </button>
+            ))}
+            </div>
+        </div>
+
+        {/* Precio y validación */}
         {productoSeleccionado && (
-            <p>Precio Total: ${productoSeleccionado.precio}</p>
+            <div className="alert alert-success">
+            <h5 className="mb-0">Precio Total: ${productoSeleccionado.precio}</h5>
+            </div>
         )}
 
-        <button disabled={!estaCompleto}>
+        <button 
+            className="btn btn-success btn-lg w-100 mt-2" 
+            disabled={!estaCompleto}
+        >
             Agregar al carrito
         </button>
         </div>
