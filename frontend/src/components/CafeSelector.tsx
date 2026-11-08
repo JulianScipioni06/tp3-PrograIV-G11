@@ -2,19 +2,20 @@ import { useState } from 'react';
 
 export const CafeSelector = ({ productos }: { productos: any[] }) => {
     const [bebida, setBebida] = useState<string | null>(null);
-    const [tamaño, setTamaño] = useState<string | null>(null);
+    const [tamanioSeleccionado, setTamanio] = useState<string | null>(null);
     const [origen, setOrigen] = useState<string | null>(null);
 
-    const estaCompleto = bebida !== null && tamaño !== null && origen !== null;
+    const estaCompleto = bebida !== null && tamanioSeleccionado !== null && origen !== null;
 
+    // CAMBIO: Buscamos por p.tamanio en vez de p.tamaño
     const productoSeleccionado = productos.find(
-        (p) => p.nombre === bebida && p.tamaño === tamaño
+        (p) => p.nombre === bebida && p.tamanio === tamanioSeleccionado
     );
 
-    // REFACTOR: Extraemos las opciones únicas para no repetir botones en la pantalla
+    // CAMBIO: Mapeamos p.tamanio en vez de p.tamaño
     const bebidasUnicas = Array.from(new Set(productos.map(p => p.nombre)));
-    const tamañosUnicos = Array.from(new Set(productos.map(p => p.tamaño)));
-    const origenesUnicos = ['Colombia', 'Brasil', 'Etiopía']; // Orígenes fijos por ahora
+    const tamaniosUnicos = Array.from(new Set(productos.map(p => p.tamanio))).filter(Boolean); // filter por si alguno viene vacío
+    const origenesUnicos = ['Colombia', 'Brasil', 'Etiopía']; 
 
     return (
         <div className="container mt-4">
@@ -23,7 +24,7 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
         {/* PASO 1: Bebida */}
         <div className="mb-4">
             <h4>1. Elegí tu bebida</h4>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-wrap">
             {bebidasUnicas.map(b => (
                 <button 
                 key={b} 
@@ -39,12 +40,12 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
         {/* PASO 2: Tamaño */}
         <div className="mb-4">
             <h4>2. Elegí el tamaño</h4>
-            <div className="d-flex gap-2">
-            {tamañosUnicos.map(t => (
+            <div className="d-flex gap-2 flex-wrap">
+            {tamaniosUnicos.map(t => (
                 <button 
                 key={t} 
-                className={`btn ${tamaño === t ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => setTamaño(t)}
+                className={`btn ${tamanioSeleccionado === t ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setTamanio(t as string)}
                 >
                 {t}
                 </button>
@@ -55,7 +56,7 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
         {/* PASO 3: Origen */}
         <div className="mb-4">
             <h4>3. Elegí el origen</h4>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-wrap">
             {origenesUnicos.map(o => (
                 <button 
                 key={o} 
@@ -68,10 +69,10 @@ export const CafeSelector = ({ productos }: { productos: any[] }) => {
             </div>
         </div>
 
-        {/* Precio y validación */}
         {productoSeleccionado && (
             <div className="alert alert-success">
-            <h5 className="mb-0">Precio Total: ${productoSeleccionado.precio}</h5>
+            {/* CAMBIO: Mostramos precioBase en vez de precio */}
+            <h5 className="mb-0">Precio Total: ${productoSeleccionado.precioBase}</h5>
             </div>
         )}
 
