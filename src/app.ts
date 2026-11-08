@@ -14,6 +14,7 @@ import { notFoundMiddleware, globalErrorHandler } from './middlewares/errorHandl
 
 export function makeApp(dbPath?: string): Express {
     const app = express();
+    
     app.use(cors());
     app.use(express.json());
 
