@@ -38,3 +38,26 @@ const parsed = PedidoSchema.safeParse(data);
 
 return parsed.data;
 }
+
+export async function obtenerPedido(id: number): Promise<Pedido> {
+    const response = await apiClient(`/pedidos/${id}`);
+    const data: unknown = await response.json();
+
+    if (!response.ok) {
+        const mensajeError =
+            typeof data === 'object' &&
+            data !== null &&
+            'error' in data &&
+            typeof data.error === 'string'
+                ? data.error
+                : 'No se pudo obtener el pedido';
+        throw new Error(mensajeError);
+    }
+
+    const parsed = PedidoSchema.safeParse(data);
+    if (!parsed.success) {
+        throw new Error('La respuesta del servidor no cumple con el contrato esperado');
+    }
+
+    return parsed.data;
+}

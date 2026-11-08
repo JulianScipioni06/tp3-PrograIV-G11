@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CafeMenu, type ProductoAPI } from './components/CafeMenu';
 import { crearPedido } from './api/cliente';
 import type { Pedido } from './api/schemas';
+import { SeguimientoPedido } from './components/SeguimientoPedido';
 import { Header } from './components/Header';
 import { obtenerMesaDesdeUrl } from './utils/mesa';
 import './styles/custom.scss';
@@ -98,14 +99,10 @@ function App() {
           </div>
         )}
 
-        {pedidoConfirmado && (
-          <div className="alert alert-success mt-4">
-            <h4>Pedido #{pedidoConfirmado.id} confirmado</h4>
-            <p className="mb-1">Estado: {pedidoConfirmado.estado}</p>
-            <p className="mb-0">Total: ${pedidoConfirmado.total}</p>
-          </div>
-        )}
-      </main>
+            {pedidoConfirmado && (
+        <SeguimientoPedido pedidoId={pedidoConfirmado.id} />
+      )}
+        </main>
     </div>
   );
 }
