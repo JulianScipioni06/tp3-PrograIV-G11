@@ -19,8 +19,7 @@ type MenuState =
     | { estado: 'cargando' }
     | { estado: 'error'; mensaje: string }
     | { estado: 'listo'; productos: ProductoAPI[] };
-
-export const CafeMenu = () => {
+export const CafeMenu = ({ onAgregar }: { onAgregar?: (p: ProductoAPI) => void }) => {
     const [state, setState] = useState<MenuState>({ estado: 'cargando' });
 
     useEffect(() => {
@@ -67,5 +66,5 @@ export const CafeMenu = () => {
     // 2. CAMBIO ACÁ: Filtramos para mandar solo lo que NO sea pastelería
     const soloCafes = state.productos.filter(p => p.tipo !== 'pasteleria');
 
-    return <CafeSelector productos={soloCafes} />;
+    return <CafeSelector productos={soloCafes} onAgregar={onAgregar} />;
 };
