@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { obtenerMesaDesdeUrl } from '../../src/utils/mesa';
+import { obtenerMesaDesdeUrl } from '../utils/mesa';
 
 describe('Funciones Puras: obtenerMesaDesdeUrl', () => {
     it('debe devolver el número si el parámetro mesa es válido', () => {
