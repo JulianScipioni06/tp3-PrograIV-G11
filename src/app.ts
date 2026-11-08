@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cors from 'cors';
 import { createDb, seedDb } from './db/connection';
 
 import { ProductoRepository } from './repositories/ProductoRepository';
@@ -11,6 +12,8 @@ import { makeTestRouter } from './routes/e2e.routes';
 
 export function makeApp(dbPath?: string): Express {
     const app = express();
+    
+    app.use(cors());
     app.use(express.json());
 
     // Si estamos testeando usamos la RAM, si no, creamos un archivo físico
