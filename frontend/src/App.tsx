@@ -2,18 +2,13 @@ import { useState } from 'react';
 import { CafeMenu, type ProductoAPI } from './components/CafeMenu';
 import { crearPedido } from './api/cliente';
 import type { Pedido } from './api/schemas';
+import { Header } from './components/Header';
+import { obtenerMesaDesdeUrl } from './utils/mesa';
+import './styles/custom.scss';
 
 interface ItemCarrito {
   producto: ProductoAPI;
   cantidad: number;
-}
-
-function obtenerMesaDesdeURL(): number | null {
-  const params = new URLSearchParams(window.location.search);
-  const mesaParam = params.get('mesa');
-  if (!mesaParam) return null;
-  const numero = Number(mesaParam);
-  return Number.isInteger(numero) && numero > 0 ? numero : null;
 }
 
 function App() {
@@ -45,7 +40,8 @@ function App() {
     setErrorCheckout(null);
 
     try {
-      const mesaId = obtenerMesaDesdeURL();
+      const mesaId = obtenerMesaDesdeUrl(window.location.search) ?? undefined;
+      
       const items = carrito.map((item) => ({
         productoId: item.producto.id,
         cantidad: item.cantidad,
@@ -55,8 +51,7 @@ function App() {
       setPedidoConfirmado(pedido);
       setCarrito([]);
     } catch (error) {
-      const mensaje =
-        error instanceof Error ? error.message : 'Error al confirmar el pedido';
+      const mensaje = error instanceof Error ? error.message : 'Error al confirmar el pedido';
       setErrorCheckout(mensaje);
     } finally {
       setEnviando(false);
@@ -64,51 +59,53 @@ function App() {
   };
 
   return (
-    <div className="container py-4">
-      <h1 className="text-center mb-5">Nuestra Cafetería</h1>
+    <div className="app-container">
+      <Header />
 
-      <CafeMenu onAgregar={agregarAlCarrito} />
+      <main className="p-3">
+        <CafeMenu onAgregar={agregarAlCarrito} />
 
-      {carrito.length > 0 && (
-        <div className="card mt-4 p-3">
-          <h3>Tu pedido</h3>
-          <ul className="list-group mb-3">
-            {carrito.map((item) => (
-              <li
-                key={item.producto.id}
-                className="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <span>
-                  {item.producto.nombre} x {item.cantidad}
-                </span>
-                <span>${item.producto.precioBase * item.cantidad}</span>
-              </li>
-            ))}
-          </ul>
+        {carrito.length > 0 && (
+          <div className="card mt-4 p-3">
+            <h3>Tu pedido</h3>
+            <ul className="list-group mb-3">
+              {carrito.map((item) => (
+                <li
+                  key={item.producto.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>
+                    {item.producto.nombre} x {item.cantidad}
+                  </span>
+                  <span>${item.producto.precioBase * item.cantidad}</span>
+                </li>
+              ))}
+            </ul>
 
-          <button
-            className="btn btn-primary btn-lg w-100"
-            onClick={handleConfirmarPedido}
-            disabled={enviando}
-          >
-            {enviando ? 'Enviando pedido...' : 'Confirmar pedido'}
-          </button>
-        </div>
-      )}
+            <button
+              className="btn btn-primary btn-lg w-100"
+              onClick={handleConfirmarPedido}
+              disabled={enviando}
+            >
+              {enviando ? 'Enviando pedido...' : 'Confirmar pedido'}
+            </button>
+          </div>
+        )}
 
-      {errorCheckout && (
-        <div className="alert alert-danger mt-3" role="alert">
-          {errorCheckout}
-        </div>
-      )}
+        {errorCheckout && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorCheckout}
+          </div>
+        )}
 
-      {pedidoConfirmado && (
-        <div className="alert alert-success mt-4">
-          <h4>Pedido #{pedidoConfirmado.id} confirmado</h4>
-          <p className="mb-1">Estado: {pedidoConfirmado.estado}</p>
-          <p className="mb-0">Total: ${pedidoConfirmado.total}</p>
-        </div>
-      )}
+        {pedidoConfirmado && (
+          <div className="alert alert-success mt-4">
+            <h4>Pedido #{pedidoConfirmado.id} confirmado</h4>
+            <p className="mb-1">Estado: {pedidoConfirmado.estado}</p>
+            <p className="mb-0">Total: ${pedidoConfirmado.total}</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
