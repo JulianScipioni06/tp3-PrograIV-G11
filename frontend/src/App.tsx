@@ -81,7 +81,8 @@ function AppContent() {
           </div>
 
           <div className="col-lg-4 col-md-5 mt-4 mt-md-0">
-            <div className="card p-3 sticky-md-top" style={{ top: '90px', zIndex: 1020 }}>
+            <div className="sticky-lg-top" style={{ top: '90px'}}>
+              <div className='card p-3'>
               <h3>Tu pedido</h3>
               <Cart />
               <button
@@ -105,6 +106,7 @@ function AppContent() {
                 nombresProductos={nombresPedido} 
               />
             )}
+            </div>
           </div>
 
         </div>
