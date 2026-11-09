@@ -21,7 +21,7 @@ describe('CafeMenu - Consumo de API', () => {
     it('debe mostrar el selector cuando la API responde con éxito', async () => {
         vi.mocked(apiClient).mockResolvedValueOnce({
         ok: true,
-        json: async () => [{ id: 1, tipo: 'expreso', nombre: 'Espresso', tamanio: 'chico', precioBase: 1500 }]
+        json: async () => [{ id: 1, tipo: 'expreso', nombre: 'Espresso', tamanio: 'Mediano', precioBase: 1500 , precio: 3500}]
         } as any);
 
         render(<CafeMenu />);

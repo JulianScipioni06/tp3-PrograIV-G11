@@ -11,10 +11,27 @@ http.get('*/productos', () => {
         tipo: 'expreso',
         nombre: 'Expreso Mediano',
         tamanio: 'Mediano',
-        precioBase: 7360,
+        precioBase: 2500,
+        gramos: 27,
+        precio: 7360,
+        variedad: {
+            nombre: 'Colombia',
+            descripcion: 'Acidez media, notas citricas y florales',
+            precioPorGramo: 180,
+        },
     },
     ]);
 }),
+
+    http.get('*/pedidos/:id', ({ params }) => {
+        return HttpResponse.json({
+            id: Number(params.id),
+            mesaId: 4,
+            estado: 'pendiente',
+            items: [{ productoId: 5, cantidad: 1 }],
+            total: 17220,
+        });
+    }),
 
 // Mock de POST /pedidos (éxito 201 y rechazo 4xx)
 http.post('*/pedidos', async ({ request }) => {

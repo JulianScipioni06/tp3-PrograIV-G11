@@ -1,32 +1,53 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { CafeSelector } from './CafeSelector';
+import type { ProductoAPI } from './CafeMenu';
 import '@testing-library/jest-dom/vitest';
+
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+afterEach(() => {
+    cleanup();
+});
+
+const productosFake: ProductoAPI[] = [
+    {
+        id: 3, tipo: 'expreso', nombre: 'Expreso Pocillo Brasil', tamanio: 'Pocillo',
+        precioBase: 2500, gramos: 18, precio: 5020,
+        variedad: { nombre: 'Brasil', descripcion: 'Acidez baja', precioPorGramo: 140 },
+    },
+    {
+        id: 4, tipo: 'expreso', nombre: 'Expreso Pocillo Colombia', tamanio: 'Pocillo',
+        precioBase: 2500, gramos: 18, precio: 5740,
+        variedad: { nombre: 'Colombia', descripcion: 'Acidez media', precioPorGramo: 180 },
+    },
+];
+
+const elegir = (tipo: RegExp, tamanio: RegExp, origen: RegExp) => {
+    fireEvent.click(screen.getByRole('button', { name: tipo }));
+    fireEvent.click(screen.getByRole('button', { name: tamanio }));
+    fireEvent.click(screen.getByRole('button', { name: origen }));
+};
 
 describe('CafeSelector', () => {
     it('el botón de agregar debe iniciar deshabilitado', () => {
         render(<CafeSelector productos={[]} />);
-        const botonAgregar = screen.getByRole('button', { name: /agregar/i });
-        expect(botonAgregar).toBeDisabled();
+        expect(screen.getByRole('button', { name: /agregar/i})).toBeDisabled();
     });
 
     it('debe mostrar el precio correcto al seleccionar bebida y tamaño', () => {
-        // 1. Armamos un producto falso ("mock") simulando lo que devolvería la API
-        const productosFake = [
-        { id: 1, tipo: 'expreso', nombre: 'Espresso', tamanio: 'chico', precioBase: 1500 }
-        ];
-
         render(<CafeSelector productos={productosFake} />);
+        elegir(/^expreso$/i, /^pocillo$/i, /^colombia$/i);
+        expect(screen.getByText(/\$5740/)).toBeInTheDocument();
 
-        // 2. Buscamos los botones de opciones 
-        const botonBebida = screen.getByRole('button', { name: /espresso/i });
-        const botonTamanio = screen.getByRole('button', { name: /chico/i });
-
-        // 3. Simulamos que el usuario hace clic
-        fireEvent.click(botonBebida);
-        fireEvent.click(botonTamanio);
-
-        // 4. Verificamos que el componente muestre el precio en la pantalla
-        expect(screen.getByText(/\$1500/i)).toBeInTheDocument();
+    
+    });
+    it('debe agregar el producto del origen elegido, no el primero de la lista', () => {
+        const onAgregar = vi.fn();
+        render(<CafeSelector productos={productosFake} onAgregar={onAgregar} />);
+        elegir(/^expreso$/i, /^pocillo$/i, /^colombia$/i);
+        fireEvent.click(screen.getByRole('button', { name: /agregar/i }));
+        expect(onAgregar).toHaveBeenCalledWith(expect.objectContaining({ id: 4 }));
     });
 });
