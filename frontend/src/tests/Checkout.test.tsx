@@ -15,17 +15,10 @@ afterEach(() => {
 afterAll(() => server.close());
 
 async function seleccionarYAgregarCafe() {
-    const btnBebida = await screen.findByRole('button', { name: /expreso mediano/i });
-    await userEvent.click(btnBebida);
-
-    const btnTamano = screen.getByRole('button', { name: /^mediano$/i });
-    await userEvent.click(btnTamano);
-
-    const btnOrigen = screen.getByRole('button', { name: /colombia/i });
-    await userEvent.click(btnOrigen);
-
-    const btnAgregar = screen.getByRole('button', { name: /agregar al carrito/i });
-    await userEvent.click(btnAgregar);
+    await userEvent.click(await screen.findByRole('button', { name: /^expreso$/i }));
+    await userEvent.click(screen.getByRole('button', { name: /^mediano$/i }));
+    await userEvent.click(screen.getByRole('button', { name: /^colombia$/i }));
+    await userEvent.click(screen.getByRole('button', { name: /agregar al carrito/i }));
 }
 
 describe('Checkout y Manejo de Errores', () => {

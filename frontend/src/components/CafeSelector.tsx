@@ -5,23 +5,41 @@ interface CafeSelectorProps {
     productos: ProductoAPI[];
     onAgregar?: (producto: ProductoAPI) => void;
 }
+const Orden_Tamanios = [ 'Pocillo', 'Mediano', 'Taza grande'];
+
+const unicos = <T,>(valores: (T | undefined)[]): T[] =>
+    Array.from(new Set(valores.filter((v): v is T => v !== undefined)));
+
+const capitalizar = (texto: string) => texto.charAt(0).toUpperCase() + texto.slice(1);
 
 export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
-    const [bebida, setBebida] = useState<string | null>(null);
-    const [tamanioSeleccionado, setTamanio] = useState<string | null>(null);
+    const [tipo, setTipo] = useState<string | null>(null);
+    const [tamanio, setTamanio] = useState<string | null>(null);
     const [origen, setOrigen] = useState<string | null>(null);
-
-    const estaCompleto = bebida !== null && tamanioSeleccionado !== null && origen !== null;
-
-    // CAMBIO: Buscamos por p.tamanio en vez de p.tamaño
-    const productoSeleccionado = productos.find(
-        (p) => p.nombre === bebida && p.tamanio === tamanioSeleccionado
+    
+    const tipos = unicos(productos.map((p) => p.tipo));
+    const tamanios = unicos (
+        productos.filter((p) => p.tipo === tipo).map((p) => p.tamanio),
+    ).sort ((a,b) => Orden_Tamanios.indexOf(a) - Orden_Tamanios.indexOf(b));
+    
+    const origenes = unicos (
+        productos.filter((p) => p.tipo === tipo && p.tamanio === tamanio).map((p) => p.variedad?.nombre),
     );
 
-    // CAMBIO: Mapeamos p.tamanio en vez de p.tamaño
-    const bebidasUnicas = Array.from(new Set(productos.map(p => p.nombre)));
-    const tamaniosUnicos = Array.from(new Set(productos.map(p => p.tamanio))).filter(Boolean); // filter por si alguno viene vacío
-    const origenesUnicos = ['Colombia', 'Brasil', 'Etiopía']; 
+    const productoSeleccionado = productos.find(
+        (p) => p.tipo === tipo && p.tamanio === tamanio && p.variedad?.nombre === origen,
+    );
+
+    const elegirTipo = (t: string) => {
+        setTipo(t);
+        setTamanio(null);
+        setOrigen(null);
+    };
+    
+    const elegirTamanio = (t: string) => {
+        setTamanio(t);
+        setOrigen(null);
+    }
 
     const handleAgregar = () => {
     if (productoSeleccionado && onAgregar) {
@@ -37,13 +55,13 @@ export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
         <div className="mb-4">
             <h4>1. Elegí tu bebida</h4>
             <div className="d-flex gap-2 flex-wrap">
-            {bebidasUnicas.map(b => (
+            {tipos.map(t => (
                 <button 
-                key={b} 
-                className={`btn ${bebida === b ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => setBebida(b)}
+                key={t} 
+                className={`btn ${tipo === t ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => elegirTipo(t)}
                 >
-                {b}
+                {capitalizar(t)}
                 </button>
             ))}
             </div>
@@ -53,11 +71,11 @@ export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
         <div className="mb-4">
             <h4>2. Elegí el tamaño</h4>
             <div className="d-flex gap-2 flex-wrap">
-            {tamaniosUnicos.map(t => (
+            {tamanios.map(t => (
                 <button 
                 key={t} 
-                className={`btn ${tamanioSeleccionado === t ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => setTamanio(t as string)}
+                className={`btn ${tamanio === t ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => elegirTamanio(t)}
                 >
                 {t}
                 </button>
@@ -69,7 +87,7 @@ export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
         <div className="mb-4">
             <h4>3. Elegí el origen</h4>
             <div className="d-flex gap-2 flex-wrap">
-            {origenesUnicos.map(o => (
+            {origenes.map(o => (
                 <button 
                 key={o} 
                 className={`btn ${origen === o ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -80,17 +98,15 @@ export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
             ))}
             </div>
         </div>
-
         {productoSeleccionado && (
-            <div className="alert alert-success">
-            {/* CAMBIO: Mostramos precioBase en vez de precio */}
-            <h5 className="mb-0">Precio Total: ${productoSeleccionado.precioBase}</h5>
-            </div>
-        )}
+    <div className="alert alert-info py-2">
+        Precio: ${productoSeleccionado.precio}
+    </div>
+)}
 
         <button 
             className="btn btn-success btn-lg w-100 mt-2" 
-            disabled={!estaCompleto}
+            disabled={!productoSeleccionado}
             onClick={handleAgregar}
         >
             Agregar al carrito
