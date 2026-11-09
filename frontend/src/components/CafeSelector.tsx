@@ -99,9 +99,14 @@ export const CafeSelector = ({ productos, onAgregar }: CafeSelectorProps) => {
             </div>
         </div>
         {productoSeleccionado && (
-    <div className="alert alert-info py-2">
-        Precio: ${productoSeleccionado.precio}
-    </div>
+        <div className="alert alert-info py-2">
+            <p className="mb-1"><strong>Precio:</strong> ${productoSeleccionado.precio}</p>
+            {productoSeleccionado.variedad?.descripcion && (
+                <p className="mb-0 small text-muted">
+                    <em>{productoSeleccionado.variedad.descripcion}</em>
+                </p>
+            )}
+        </div>
 )}
 
         <button 
