@@ -70,34 +70,45 @@ function AppContent() {
   };
 
   return (
-    <div className="app-container">
+    <div className="w-100">
       <Header />
 
-      <main className="p-3">
-        <CafeMenu onAgregar={agregarAlCarrito} />
-          <div className="card mt-4 p-3">
-            <h3>Tu pedido</h3>
-            <Cart />
-            <button
-              className="btn btn-primary btn-lg w-100"
-              onClick={handleConfirmarPedido}
-              disabled={enviando|| state.items.length === 0}
-            >
-              {enviando ? 'Enviando pedido...' : 'Confirmar pedido'}
-            </button>
+      <main className="container p-3">
+        <div className="row">
+          
+          <div className="col-lg-8 col-md-7">
+            <CafeMenu onAgregar={agregarAlCarrito} />
           </div>
-        {errorCheckout && (
-          <div className="alert alert-danger mt-3" role="alert">
-            {errorCheckout}
-          </div>
-        )}
+
+          <div className="col-lg-4 col-md-5 mt-4 mt-md-0">
+            <div className="card p-3 sticky-md-top" style={{ top: '90px', zIndex: 1020 }}>
+              <h3>Tu pedido</h3>
+              <Cart />
+              <button
+                className="btn btn-primary btn-lg w-100"
+                onClick={handleConfirmarPedido}
+                disabled={enviando || state.items.length === 0}
+              >
+                {enviando ? 'Enviando pedido...' : 'Confirmar pedido'}
+              </button>
+            </div>
+
+            {errorCheckout && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {errorCheckout}
+              </div>
+            )}
 
             {pedidoConfirmado && (
-        <SeguimientoPedido 
-        pedidoId={pedidoConfirmado.id}
-        nombresProductos={nombresPedido} />
-      )}
-        </main>
+              <SeguimientoPedido 
+                pedidoId={pedidoConfirmado.id}
+                nombresProductos={nombresPedido} 
+              />
+            )}
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }
