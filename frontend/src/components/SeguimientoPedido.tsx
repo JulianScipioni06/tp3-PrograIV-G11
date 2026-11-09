@@ -4,11 +4,12 @@ import type { Pedido } from '../api/schemas';
 
 interface Props {
     pedidoId: number;
+    nombresProductos: Record<number, string>;
 }
 
 const INTERVALO_MS = 3000;
 
-export function SeguimientoPedido({ pedidoId }: Props) {
+export function SeguimientoPedido({ pedidoId , nombresProductos}: Props) {
     const [pedido, setPedido] = useState<Pedido | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -54,20 +55,27 @@ export function SeguimientoPedido({ pedidoId }: Props) {
 
     return (
     <div className="alert alert-success mt-4" data-testid="seguimiento-pedido">
-        <h4>Pedido #{pedido.id}</h4>
-        <p className="mb-1" data-testid="seguimiento-estado">
-        Estado: {pedido.estado}
-        </p>
-        <ul className="mb-1">
-        {pedido.items.map((item) => (
-            <li key={item.productoId}>
-            Producto {item.productoId} x {item.cantidad}
-            </li>
-        ))}
+        <h5 className='mb-2'>Resumen de compra:</h5>
+        <ul className='mb-3'>
+            {pedido.items.map((item) => {
+            const nombre = nombresProductos[item.productoId] || `Producto ${item.productoId}`;
+            return(
+                <li key={item.productoId}>
+                    <strong>{nombre}</strong> x {item.cantidad}
+                </li>
+            );
+            })}
         </ul>
-        <p className="mb-0" data-testid="seguimiento-total">
-        Total: ${pedido.total}
-        </p>
+
+        <hr/>
+
+        <h4>Pedido #{pedido.id}</h4>
+            <p className="mb-1" data-testid="seguimiento-estado">
+                Estado: {pedido.estado}
+            </p>
+            <p className="mb-0" data-testid="seguimiento-total">
+                Total: ${pedido.total}
+            </p>
     </div>
     );
 }

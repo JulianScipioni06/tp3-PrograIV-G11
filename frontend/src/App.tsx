@@ -16,6 +16,7 @@ function AppContent() {
   const [pedidoConfirmado, setPedidoConfirmado] = useState<Pedido | null>(null);
   const [errorCheckout, setErrorCheckout] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [nombresPedido, setNombresPedido] = useState<Record<number, string>>({});
 
   const agregarAlCarrito = (producto: ProductoAPI) => {
     setErrorCheckout(null);
@@ -44,6 +45,12 @@ function AppContent() {
     try {
       const mesaId = obtenerMesaDesdeUrl(window.location.search) ?? undefined;
       
+      const diccionarioNombres: Record<number, string> = {};
+      state.items.forEach((item: any) => {
+        diccionarioNombres[item.productoId] = item.nombre || `Producto ${item.productoId}`;
+      });
+      setNombresPedido(diccionarioNombres);
+
       const items = state.items
       .map((item) => ({
         productoId: item.productoId,
@@ -86,7 +93,9 @@ function AppContent() {
         )}
 
             {pedidoConfirmado && (
-        <SeguimientoPedido pedidoId={pedidoConfirmado.id} />
+        <SeguimientoPedido 
+        pedidoId={pedidoConfirmado.id}
+        nombresProductos={nombresPedido} />
       )}
         </main>
     </div>
