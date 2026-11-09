@@ -7,7 +7,7 @@ export const ProductoSchema = z.object({
     nombre: z.string(),
     precio: z.number(),
     tamanio: z.enum(['Pocillo', 'Mediano', 'Taza grande']).optional(),
-    variedad: z.object({nombre: z.string(), descripcion: z.string() }).optional(),
+    variedad: z.object({nombre: z.string(), descripcion: z.string(), precioPorGramo: z.number().optional(), }).optional(),
 });
 
 export type Producto = z.infer<typeof ProductoSchema>;

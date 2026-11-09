@@ -3,16 +3,20 @@ import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { CafeSelector } from './CafeSelector';
 import { apiClient } from '../api/cliente';
+import { ProductoSchema as ProductoBaseSchema } from '../api/schemas';
 
 // 1. CAMBIO ACÁ: Ajustamos los nombres para que coincidan con la base de datos
-const ProductoSchema = z.object({
-    id: z.number(),
-    tipo: z.string(),
-    nombre: z.string(),
-    tamanio: z.string().optional(), // Cambiado de "tamaño" a "tamanio" (y opcional)
-    precioBase: z.number()          // Cambiado de "precio" a "precioBase"
-});
-
+const ProductoSchema = ProductoBaseSchema.extend({
+    precioBase: z.number(),
+    precio: z.number().optional(),
+    gramos: z.number().optional(),
+    variedad: z.object({
+        nombre: z.string(),
+        descripcion: z.string(),
+        precioPorGramo: z.number(),
+    })
+    .optional(),
+})
 export type ProductoAPI = z.infer<typeof ProductoSchema>;
 
 type MenuState = 
